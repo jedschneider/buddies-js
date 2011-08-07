@@ -6,3 +6,16 @@ Sparkles.Model = Backbone.Model.extend
         if(@attribute_types[k] == 'integer')
           atts[k] = parseInt(atts[k])
     _.bind(Backbone.Model.prototype.set, @)(atts, options)
+
+Sparkles.CachedCollection = Backbone.Collection.extend
+  fetch: (opts = {}) ->
+    success = opts.success
+    if(@__cache__)
+      _.defer =>
+        success(@__cache__) if success
+        @trigger 'reset'
+    else
+      opts.success = (coll, resp) =>
+        @__cache__ = coll
+        success(coll, resp) if success
+      Backbone.Collection.prototype.fetch.call(@, opts)
