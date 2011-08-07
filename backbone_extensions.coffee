@@ -13,3 +13,16 @@ Sparkles.View = Backbone.View.extend
   template_helpers: (template, ob = {}) ->
     ob = _.extend(_.clone(FormHelpers), ob)
     template(ob)
+
+Sparkles.CachedCollection = Backbone.Collection.extend
+  fetch: (opts = {}) ->
+    success = opts.success
+    if(@__cache__)
+      _.defer =>
+        success(@__cache__) if success
+        @trigger 'reset'
+    else
+      opts.success = (coll, resp) =>
+        @__cache__ = coll
+        success(coll, resp) if success
+      Backbone.Collection.prototype.fetch.call(@, opts)
