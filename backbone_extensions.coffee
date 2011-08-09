@@ -7,6 +7,9 @@ Sparkles.Model = Backbone.Model.extend
           atts[k] = parseInt(atts[k])
     _.bind(Backbone.Model.prototype.set, @)(atts, options)
 
+Sparkles.Collection = Backbone.Collection.extend
+  comparator: (obj)-> obj.get('order') || 9999.0
+
 Sparkles.CachedCollection = Backbone.Collection.extend
   fetch: (opts = {}) ->
     success = opts.success
