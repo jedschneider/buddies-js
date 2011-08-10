@@ -1,10 +1,10 @@
 FormHelpers =
-  label_tag: (id, text) -> "<label for='#{id}'>#{text}</label>"
-  text_field_tag: (id) -> "<input type='text' id='#{id}' name='#{id}'></input>"
-  check_box_tag: (id) -> "<input type='checkbox' id='#{id}' name='#{id}'></input>"
-  text_area_tag: (id) -> "<textarea id='#{id}' name='#{id}'></textarea>"
+  label_tag: (text, id) -> "<label>#{text}</label>"
+  text_field_tag: (name) -> "<input type='text' class='#{name}' name='#{name}'></input>"
+  check_box_tag: (name) -> "<input type='checkbox' class='#{name}' name='#{name}'></input>"
+  text_area_tag: (name) -> "<textarea class='#{name}' name='#{name}'></textarea>"
   radio_button_tag: (name, value, checked = false) ->
-    "<input type='radio' id='#{name}_#{value}'#{checked ? ' checked="checked"' : ''} name='#{name}'></input>"
+    "<input type='radio'#{checked ? ' checked="checked"' : ''} class='#{name}' name='#{name}' value='#{value}'></input>"
 
 # Aliases
 FormHelpers.label_for = FormHelpers.label_tag
