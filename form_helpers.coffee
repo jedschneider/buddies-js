@@ -1,5 +1,6 @@
 FormHelpers =
-  label_tag: (text, id) -> "<label>#{text}</label>"
+  # ID is ignored. Present in arg-list so signature matches Rails.
+  label_tag: (id, text) -> "<label>#{text}</label>"
   text_field_tag: (name) -> "<input type='text' class='#{name}' name='#{name}'></input>"
   check_box_tag: (name) -> "<input type='checkbox' class='#{name}' name='#{name}'></input>"
   text_area_tag: (name) -> "<textarea class='#{name}' name='#{name}'></textarea>"
