@@ -2,7 +2,11 @@ FormHelpers =
   # ID is ignored. Present in arg-list so signature matches Rails.
   label_tag: (id, text) -> "<label>#{text}</label>"
   text_field_tag: (name) -> "<input type='text' class='#{name}' name='#{name}'></input>"
-  check_box_tag: (name) -> "<input type='checkbox' class='#{name}' name='#{name}'></input>"
+  check_box_tag: (name, checked=false) ->
+    if checked
+      "<input type='checkbox' class='#{name}' name='#{name}' checked='#{checked}'></input>"
+    else
+      "<input type='checkbox' class='#{name}' name='#{name}'></input>"
   text_area_tag: (name) -> "<textarea class='#{name}' name='#{name}'></textarea>"
   radio_button_tag: (name, value, checked = false) ->
     "<input type='radio'#{checked ? ' checked="checked"' : ''} class='#{name}' name='#{name}' value='#{value}'></input>"
