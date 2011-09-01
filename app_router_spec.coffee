@@ -43,7 +43,7 @@ describe "AppRouter", ->
 
         it "should fetch the associated project", ->
           expect(Bootstrapper.current instanceof BarView).toBeTruthy()
-            
+
         it "should get the right project", ->
           runs ->
             expect(Bootstrapper.current.model.project.get('id')).toEqual project_id
