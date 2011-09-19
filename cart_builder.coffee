@@ -1,13 +1,16 @@
 CartBuilder =
   create_cart: (model) ->
     cv = new CartView(model: model)
-    
+
     unless $('.right #services').length
+      unless Bootstrapper.current instanceof CatalogView
+        $('.right').prepend("<a href=\"#service_requests/#{model.get 'id'}/services\"> Back to Catalog</a>")
+
       $('.right').prepend(cv.render().el)
-    
+
     if model.line_items.length > 0
       services = model.services()
-          
+
       # Attach the services to the line_items and trigger event so the cartview
       # will show them
       success = =>
@@ -15,13 +18,13 @@ CartBuilder =
         model.line_items.each (line_item) ->
           line_item.service = services.get(line_item.get('service_id'))
           CartBuilder.add_line_item(line_item, model)
-        
+
         # add striping to cart items
-        odd = false 
+        odd = false
         $('#my_services div.line_item').each( ->
           $(@).addClass('odd') if odd
           odd = !odd
-          return @ 
+          return @
         )
 
         return @
@@ -29,14 +32,13 @@ CartBuilder =
     else
       $('.right #services #my_services').empty()
 
-  
   add_line_item: (li, service_request) ->
     civ = new CartItemView(model: li, service_request: service_request)
     $('#my_services').append(civ.render().el)
 
   remove_line_item: (li, service_request) ->
     as = li.service.associated_services()
-    
+
     wait_for_me = =>
       if as.length > 0
         _.each as.models, (a_service) =>
