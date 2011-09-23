@@ -4,7 +4,7 @@ CartBuilder =
 
     unless $('.right #services').length
       unless Bootstrapper.current instanceof CatalogView
-        $('.right').prepend("<a href=\"#service_requests/#{model.get 'id'}/services\"> Back to Catalog</a>")
+        $('.right').prepend("<a class=\"return-to-catalog\"> Back to Catalog</a>")
 
       $('.right').prepend(cv.render().el)
 
@@ -48,4 +48,3 @@ CartBuilder =
       service_request.save({}, success: => CartBuilder.create_cart(service_request))
 
     as.fetch(success: wait_for_me)
-
