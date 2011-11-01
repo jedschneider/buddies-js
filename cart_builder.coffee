@@ -37,14 +37,13 @@ CartBuilder =
     $('#my_services').append(civ.render().el)
 
   remove_line_item: (li, service_request) ->
-    as = li.service.associated_services()
+    sas = li.service.service_associations()
 
     wait_for_me = =>
-      if as.length > 0
-        _.each as.models, (a_service) =>
-          if a_li = (li.collection.detect((li) -> li.service.id == a_service.get('service_id')))
-            a_li.attributes['optional'] = 'true'
+      sas.each (association) =>
+        if a_li = (li.collection.detect((li) -> li.service.id == association.get('service_id')))
+          a_li.attributes['optional'] = true
       li.collection.remove(li)
       service_request.save({}, success: => CartBuilder.create_cart(service_request))
 
-    as.fetch(success: wait_for_me)
+    sas.fetch(success: wait_for_me)
