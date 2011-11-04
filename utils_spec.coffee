@@ -21,8 +21,8 @@ describe "ViewHelper", ->
       it "should round down correctly", ->
         expect( ViewHelper.money(1483.13) ).toEqual "$14.83"
 
-      it "should round up correctly", ->
-        expect( ViewHelper.money(1483.51) ).toEqual "$14.84"
+      it "should not round up to the next full cent", ->
+        expect( ViewHelper.money(1483.51) ).toEqual "$14.83"
 
       it "should round correctly for long floats", ->
         expect( ViewHelper.money(1483.446) ).toEqual "$14.83"
