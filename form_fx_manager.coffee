@@ -8,7 +8,6 @@
 # In a view declare a map of dependencies.
 # For checkboxes, the key should be a string of 'true' or 'false'
 # For select tags, the key should be the option value to be selected
-# FIXME: to be implemented:
 # For text boxes, the key should be 'true' or 'false' which defines presence or no presence
 #
 # Example:
@@ -27,11 +26,14 @@
 
 FormFxManager =
   registerListeners : (el, atts)->
-    inputs = _.memoize((key) -> SparkleUtils.getInput(el, key))
+    inputs = _.memoize((key) -> FormFxManager.getSelector(el, key))
+
+    done_ran = {}
 
     _.each _.keys(atts), (key) ->
 
       hide_deps = (key) ->
+        done_ran[key] = true
         vals = atts[key]
         dependents = _.union(_.values(atts[key])...)
         _.each dependents, (d) ->
@@ -40,6 +42,7 @@ FormFxManager =
             hide_deps(d)
 
       refresh_deps = (key)->
+        done_ran[key] = true
         vals = atts[key]
         dependents = _.union(_.values(atts[key])...)
         val = FormFxManager.getValue( inputs(key) )
@@ -57,12 +60,23 @@ FormFxManager =
 
       # change handler
       inputs(key).change -> refresh_deps(key)
-      refresh_deps(key)
+      refresh_deps(key) unless done_ran[key]
+
+  getSelector : (el, selector)->
+    [garbage, class_name, selector_id, name] = selector.match /(^\..*)|(^\#.*)|(^.*)/
+    if name
+      sel = $(el).find("[name='#{name}']")
+    else
+      sel = $(el).find(class_name or selector_id)
+    assert sel and (sel.length > 0), "FormFxManager.getSelector: could not find element for key #{selector}"
+    sel
 
   getValue: (input)->
     if input.is(':checkbox')
       if input.is(':checked') then 'true' else 'false'
     else if input[0].tagName == "SELECT"
       input.find("option:selected").val()
+    else if input.is("[type=text]")
+      if input.val().length > 0 then 'true' else 'false'
     else
       input.val()

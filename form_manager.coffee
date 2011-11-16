@@ -72,7 +72,7 @@ FormManager =
       input = $(@el).find(":input[name='#{name}']")
     else
       input = $(@el).find(":input#{class_name or selector_id}")
-    assert input and (input.length > 0), "could not find an element to match the key #{selector}"
+    assert input and (input.length > 0), "FormManager#getInput could not find an element to match the key #{selector}"
     input
 
   # this will probably get hairy at some point
