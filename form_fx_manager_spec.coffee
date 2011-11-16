@@ -114,6 +114,43 @@ describe "FormFxManager", ->
         runs ->
           expect( gary() ).toBeVisible()
 
+    describe "a different nested dependency", ->
+      beforeEach ->
+        el = $("
+          <form id='myform'>
+            <input type='checkbox' name='foo' ></input>
+            <input type='checkbox' name='bar'></input>
+            <input type='text' name='jed'></input>
+            <input type='text' name='gary'></input>
+          </form>")
+        atts =
+          'foo' :
+            'true' : ['bar']
+          'bar' :
+            'false' : ['gary']
+        setup(el, atts)
+
+      afterEach -> after()
+
+      it "should start with gary hidden", ->
+        runs ->
+          expect( gary() ).toBeHidden()
+
+      it "should show gary when foo is checked", ->
+        check_foo()
+        waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
+        runs ->
+          expect( gary() ).toBeVisible()
+
+      it "should show bar when foo is checked then hide gary when bar is checked", ->
+        check_foo()
+        waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
+        runs ->
+          bar().prop('checked', true).change()
+        waitsFor((-> bar().is(':checked')), 1000, 'bar to be checked')
+        runs ->
+          expect( gary() ).toBeHidden()
+
   describe "a select tag", ->
     baz = -> $(el).find(':input[name="baz"]')
     select_bar = ->
@@ -158,3 +195,46 @@ describe "FormFxManager", ->
           $(el).find('select').val('foo').change()
         waitsFor((-> baz().is(':hidden')), 1000, 'baz to be hidden')
         runs -> expect(true).toBeTruthy() #=> jasmine hack
+
+  describe "a text field", ->
+    fill_in_baz = (stuff)-> $(el).find(":input[name='baz']").val("fizzle").change()
+    beforeEach ->
+      el = $("
+        <form id='myform'>
+          <input type='text' name='baz'></input>
+          <input type='text' name='biz'></input>
+        </form>")
+      atts = {baz : {'true' : ['biz'] }}
+      setup(el, atts)
+    afterEach -> after()
+
+    it "should show a dependent input when the input has text", ->
+      waits 10
+      runs ->
+        expect( $(el).find(":input[name='biz']") ).toBeHidden()
+      waits 1
+      runs fill_in_baz
+      waitsFor( (-> $(el).find(":input[name='biz']").is(":visible")), 1000, "biz to be visible")
+      runs -> expect(true).toBeTruthy() #=> jasmine hack
+
+  describe "for a class name", ->
+    beforeEach ->
+      el = $('
+        <form id="myform">
+          <input name="foo" type="text"></input>
+          <div class="boo bar">
+            <input name="bar" type="text"></input>
+          </div>
+        </form>')
+      atts = {foo : {'true' : ['.bar']}}
+      setup(el,atts)
+
+    afterEach -> after()
+
+    it "should hide the element with the giving class", ->
+      runs ->
+        expect( $(el).find("div.bar") ).toBeHidden()
+        foo().val("fizzle").change()
+      waitsFor((-> bar().is(":visible")), 1000, "bar to be visible")
+      runs ->
+        expect( $(el).find("div.bar") ).toBeVisible()
