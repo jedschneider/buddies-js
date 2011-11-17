@@ -33,3 +33,22 @@ describe "ViewHelper", ->
 
     it "should return a blank string if no string is given", ->
       expect(ViewHelper.date(null)).toEqual ""
+
+  describe "pluralize", ->
+    it "should pluralize units", ->
+      expect( ViewHelper.pluralize(2, "hour") ).toEqual "2 hours"
+
+    it "should not pluralize singular units", ->
+      expect( ViewHelper.pluralize(1, "hour") ).toEqual "1 hour"
+
+    it "should pluralize zero units", ->
+      expect( ViewHelper.pluralize(0, "hour") ).toEqual "0 hours"
+
+    it "should handle an invalid quantity factor", ->
+      expect( ViewHelper.pluralize(undefined, "hour") ).toEqual "N/A"
+
+    it "should handle an invalid unit type", ->
+      expect( ViewHelper.pluralize(2, undefined) ).toEqual "N/A"
+
+    it "should allow a string as unit factor input", ->
+      expect( ViewHelper.pluralize("2", "hour")).toEqual "2 hours"
