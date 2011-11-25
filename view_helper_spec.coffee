@@ -17,6 +17,15 @@ describe "ViewHelper", ->
       display_blank = true
       expect(ViewHelper.money(1234, display_blank)).toEqual "$12.34"
 
+    it "should format hundreds", ->
+      expect(ViewHelper.money(123456)).toEqual '$1,234.56'
+
+    it "should format thousands", ->
+      expect(ViewHelper.money(1234567) ).toEqual "$12,345.67"
+
+    it "should format millions", ->
+      expect(ViewHelper.money(123456789) ).toEqual "$1,234,567.89"
+
     describe "fractional cents", ->
       it "should round down correctly", ->
         expect( ViewHelper.money(1483.13) ).toEqual "$14.83"
@@ -26,6 +35,15 @@ describe "ViewHelper", ->
 
       it "should round correctly for long floats", ->
         expect( ViewHelper.money(1483.446) ).toEqual "$14.83"
+
+      it "should round correctly for thousands", ->
+        expect( ViewHelper.money(123450.99) ).toEqual "$1,234.50"
+
+      it "should round correctly for lotsa thousands", ->
+        expect( ViewHelper.money(12345670.99) ).toEqual "$123,456.70"
+
+      it "should round correctly for millions", ->
+        expect( ViewHelper.money(123456780.99) ).toEqual "$1,234,567.80"
 
   describe "date", ->
     it "should format appropriately", ->
