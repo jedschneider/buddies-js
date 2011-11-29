@@ -11,16 +11,28 @@
 # from the model_attribute to a DOM selector or as a complex map from
 # a model attribute to a map of options:
 #
-# Optionally, the 'require_visible' key can be added to the more complex map,
-# that will verify the input is in a visible state before passing the key,
-# this is largely designed to be programatically added to the map if you want
-# to be able to make the form smart about which keys to set and unset
-# before persisting to the db.
+# Options:
+# require_visible :
+#   The 'require_visible' key can be added to the more complex map,
+#   that will verify the input is in a visible state before passing the key,
+#   this is largely designed to be programatically added to the map if you want
+#   to be able to make the form smart about which keys to set and unset
+#   before persisting to the db.
 #
-# atts = {"short_title" : "short-title"}
+#   atts = {"short_title" : "short-title"}
 #
-# atts = { short_title : {selector : "short-title", require_visible : true}}
+#   atts = { short_title : {selector : "short-title", require_visible : true}}
 #
+# is_nested:
+#   Currently nesting is only supported with the name attribute for anything
+#   jQuery can match with the :input selector.
+#   Nesting is to provide magical transporation to nested attributes on the
+#   model without having to specfically handle that in the View code.
+#   Naming convetion of the inputs will take the pattern:
+#   object[attribute] where the val() will provide the option
+#   Currently only supports textboxes (the main use case) and select tags,
+#   but not multiselect (as far as I know). See Specs for better use case
+#   descriptions.
 #
 # Public API
 #
@@ -32,29 +44,63 @@ FormManager =
   populateForm : (ob, el, atts)->
     _.each _.keys(atts), (key) =>
       # normalize the default case to a map
-      @el = el
       val = atts[key]
-      if _.isString val
-        val = {selector : val}
-      selector = @detectSelector val
-      input = @getInput(selector)
-      value = ob[key]
-      if input.is(':checkbox')
-        input.prop('checked', value)
-      if input.is(':text')
-        input.val value
-      if input[0].tagName == "SELECT"
-        input.find("option[value='#{value}']").prop("selected", true)
+      @el = el
+      if val.is_nested == true
+        for k,v of ob[key]
+          sel = "#{val.selector}[#{k}]"
+          @toForm(@getInput(sel), v)
+      else
+        if _.isString(val)
+          val = {selector : val}
+        @toForm(@getInput(@detectSelector(val)), ob[key])
 
   extract: (el, atts)->
     @el = el
     ob = {}
+
     _.each _.keys(atts), (key)=>
-      selector = @detectSelector atts[key]
-      require_visible = atts[key]['require_visible']
-      input = @getInput(selector)
+
       # the attribute is defined by the map to only be saved if it is visible
       # or it is defined by the map to capture the attribute in either visible state
+      require_visible = atts[key]['require_visible']
+
+      if atts[key].is_nested == true
+        inputs = $(@el).find(":input[name^='#{key}']")
+        assert inputs.length >= 1,
+          "there were no form inputs with a name attribute supporting nesting"
+
+        # this is pretty magical and could backfire at some point
+        # it expects that the form will have an input with a name attribute
+        # and that its form will be name = 'object[attribute]'
+        _.each inputs, (i)=>
+          key = $(i).attr('name')
+          val = @fromForm($(i), require_visible)
+          [garbage, attr, option] = key.match(/(\w+)\[(\w+)\]/)
+          if _.isUndefined(ob[attr])
+            ob[attr] = {}
+          ob[attr][option] = val
+
+      # the good news is that most things don't need to be nested
+      else
+        val = atts[key]
+        if _.isString val
+          val = {selector : val }
+        selector = @detectSelector val
+        input = @getInput(selector)
+        value = @fromForm(input, require_visible)
+        ob[key] = value
+    ob
+
+  toForm : (input,value)->
+    if input.is(':checkbox')
+      input.prop('checked', value)
+    if input.is(':text')
+      input.val value
+    if input[0].tagName == "SELECT"
+      input.find("option[value='#{value}']").prop("selected", true)
+
+  fromForm : (input, require_visible)->
       if (require_visible and input.is(':visible'))  or  !require_visible
         if input.is(':text')
           value = input.val()
@@ -62,17 +108,16 @@ FormManager =
           value = input.is(":checked")
         if input[0].tagName == "SELECT"
           value = input.find("option:selected").val()
-        ob[key] = value
-    ob
+        value
 
-  # FIXME: swapout for the same method in sparkle utils
   getInput: (selector)->
     [garbage, class_name, selector_id, name] = selector.match /(^\..*)|(^\#.*)|(^.*)/
     if name
       input = $(@el).find(":input[name='#{name}']")
     else
       input = $(@el).find(":input#{class_name or selector_id}")
-    assert input and (input.length > 0), "FormManager#getInput could not find an element to match the key #{selector}"
+    assert input and (input.length > 0),
+      "FormManager#getInput could not find an element to match the key #{selector}"
     input
 
   # this will probably get hairy at some point
