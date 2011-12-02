@@ -12,7 +12,7 @@
 # a model attribute to a map of options:
 #
 # Options:
-# require_visible :
+#  require_visible :
 #   The 'require_visible' key can be added to the more complex map,
 #   that will verify the input is in a visible state before passing the key,
 #   this is largely designed to be programatically added to the map if you want
@@ -23,7 +23,7 @@
 #
 #   atts = { short_title : {selector : "short-title", require_visible : true}}
 #
-# is_nested:
+#  is_nested:
 #   Currently nesting is only supported with the name attribute for anything
 #   jQuery can match with the :input selector.
 #   Nesting is to provide magical transporation to nested attributes on the
@@ -33,6 +33,10 @@
 #   Currently only supports textboxes (the main use case) and select tags,
 #   but not multiselect (as far as I know). See Specs for better use case
 #   descriptions.
+#
+#  data_type:
+#   Passing this option will allow casting (right now only to a float) in case
+#   you have data validation issues and want to sanitize data before ajax.
 #
 # Public API
 #
@@ -64,7 +68,7 @@ FormManager =
       # the attribute is defined by the map to only be saved if it is visible
       # or it is defined by the map to capture the attribute in either visible state
       require_visible = atts[key]['require_visible']
-
+      data_type       = atts[key]['data_type']
       if atts[key].is_nested == true
         inputs = $(@el).find(":input[name^='#{key}']")
         assert inputs.length >= 1,
@@ -75,7 +79,7 @@ FormManager =
         # and that its form will be name = 'object[attribute]'
         _.each inputs, (i)=>
           key = $(i).attr('name')
-          val = @fromForm($(i), require_visible)
+          val = @fromForm($(i), require_visible, data_type)
           [garbage, attr, option] = key.match(/(\w+)\[(\w+)\]/)
           if _.isUndefined(ob[attr])
             ob[attr] = {}
@@ -88,7 +92,7 @@ FormManager =
           val = {selector : val }
         selector = @detectSelector val
         input = @getInput(selector)
-        value = @fromForm(input, require_visible)
+        value = @fromForm(input, require_visible, data_type)
         ob[key] = value
     ob
 
@@ -100,15 +104,26 @@ FormManager =
     if input[0].tagName == "SELECT"
       input.find("option[value='#{value}']").prop("selected", true)
 
-  fromForm : (input, require_visible)->
+  fromForm : (input, require_visible, data_type)->
       if (require_visible and input.is(':visible'))  or  !require_visible
         if input.is(':text')
-          value = input.val()
+          value = if data_type then @castValue(input.val(), data_type) else input.val()
         if input.is(':checkbox')
           value = input.is(":checked")
         if input[0].tagName == "SELECT"
-          value = input.find("option:selected").val()
+          rejects = for v in input.find("option:not([value])")
+            $(v).val()
+          tmp = input.find("option:selected").val()
+          if _.any(rejects, (r)-> r == tmp)
+            value = undefined
+          else
+            value = input.find("option:selected").val()
         value
+
+  castValue : (val, data_type)->
+    if data_type == "number"
+      foo = parseFloat(val)
+      if _.isNaN(foo) then 0 else foo
 
   getInput: (selector)->
     [garbage, class_name, selector_id, name] = selector.match /(^\..*)|(^\#.*)|(^.*)/
