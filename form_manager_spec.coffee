@@ -27,6 +27,23 @@ describe "FormManager", ->
 
           expect( $(el).find(":input") ).toHaveValue "Foo"
 
+      describe "data_type option", ->
+        beforeEach ->
+          atts =
+            some_number :
+              selector  : 'some-number'
+              data_type : 'number'
+          el = $("<form><input type='text' name='some-number'></input></form>")
+
+        describe "number", ->
+
+          it "should set an empty field to zero", ->
+            expect( _.isNumber(FormManager.extract(el, atts).some_number) ).toBeTruthy()
+
+          it "should use the number in the field if it got it", ->
+            el.find(':input').val('12')
+            expect( FormManager.extract(el, atts).some_number ).toEqual 12
+
       describe "nested attribute functionality for checkboxes", ->
         beforeEach ->
           atts =
@@ -161,6 +178,22 @@ describe "FormManager", ->
 
     it "should get the selected option from the select tag", ->
       expect( FormManager.extract(el, atts).zat ).toEqual ob.zat
+
+  describe "ingoring an input with the default value defined", ->
+    beforeEach ->
+      el = $("<form>
+              <select name='pets'>
+                <option>Select A Pet</option>
+                <option value='beagle'>Beagle</option>
+                <option value='cockatoo'>Cockatoo</option>
+                <option>Appliances</option>
+                <option value='microwave'>Microwave</option>
+              </select>
+              </form>")
+      atts = {pets : {selector : 'pets'}}
+
+    it "should not use the default text of the first option as data", ->
+      expect(FormManager.extract(el, atts).pets).toBeUndefined()
 
   describe "using a class attribute", ->
     beforeEach ->
