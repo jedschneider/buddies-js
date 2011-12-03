@@ -12,7 +12,10 @@ CachedReadOnlyModel.extend = (args...) ->
   clazz = Backbone.Model.extend.apply(@, args)
   _.extend clazz,
     find: (id) ->
-      (@_cache and @_cache[id])
+      if(x = (@_cache and @_cache[id]))
+        return x
+      else
+        throw "Cannot find model ##{id}!"
     add_to_cache: (model) ->
       @_cache ||= {}
       @_cache[model.id] = model
