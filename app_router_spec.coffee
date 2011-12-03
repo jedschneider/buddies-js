@@ -2,18 +2,19 @@ describe "AppRouter", ->
   describe "running the application", ->
     describe "with views that need a ServiceRequest", ->
       FooView = Backbone.View.extend
-        model:ServiceRequest
         bootstraps:
           needs_service_request: true
         initialize: (opts)->
           @model = opts.service_request
 
       beforeEach ->
-        ServerMocker.mock_model(ServiceRequest, "abc123", Fixtures.service_request)
+        # ServerMocker.mock_model(ServiceRequest, "abc123", Fixtures.service_request)
+        SpecHelper.mock_catalog()
+        SpecHelper.mock_service_request(Fixtures.service_request)
         app = new AppRouter
         runs ->
           app.prep_and_run(FooView, "abc123")
-        waits 1
+        waits 500
 
       it "should bootstrap the DOM with the appropriate view", ->
         runs ->
@@ -34,8 +35,11 @@ describe "AppRouter", ->
 
         project_id = 'abbabfebb133'
         beforeEach ->
-          sr = new ServiceRequest({id: "abc123", project_id: project_id})
-          ServerMocker.mock_model(ServiceRequest, "abc123", sr)
+          sr = SpecHelper.deep_clone(Fixtures.service_request)
+          sr.project_id = project_id
+          SpecHelper.mock_service_request sr
+          # sr = new ServiceRequest({id: "abc123", project_id: project_id})
+          # ServerMocker.mock_model(ServiceRequest, "abc123", sr)
           ServerMocker.mock_model(Project, project_id, new Project({id: project_id}))
           runs ->
             app.prep_and_run(BarView, "abc123")
