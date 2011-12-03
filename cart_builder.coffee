@@ -16,7 +16,6 @@ CartBuilder =
       success = =>
         $('.right #services #my_services').empty()
         model.line_items.each (line_item) ->
-          line_item.service = services.get(line_item.get('service_id'))
           CartBuilder.add_line_item(line_item, model)
 
         # add striping to cart items
@@ -37,11 +36,11 @@ CartBuilder =
     $('#my_services').append(civ.render().el)
 
   remove_line_item: (li, service_request) ->
-    sas = li.service.service_associations()
+    sas = li.service().service_associations()
 
     wait_for_me = =>
       sas.each (association) =>
-        if a_li = (li.collection.detect((li) -> li.service.id == association.get('service_id')))
+        if a_li = (li.collection.detect((li) -> li.service().id == association.get('service_id')))
           a_li.attributes['optional'] = true
       li.collection.remove(li)
       service_request.save({}, success: => CartBuilder.create_cart(service_request))

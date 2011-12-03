@@ -1,4 +1,5 @@
 Sparkles = {}
+# I think this can be replaced by the FormManager, right?
 Sparkles.Model = Backbone.Model.extend
   set: (atts, options) ->
     if(@attribute_types)
