@@ -8,7 +8,6 @@ describe "AppRouter", ->
           @model = opts.service_request
 
       beforeEach ->
-        # ServerMocker.mock_model(ServiceRequest, "abc123", Fixtures.service_request)
         SpecHelper.mock_catalog()
         SpecHelper.mock_service_request(Fixtures.service_request)
         app = new AppRouter
@@ -38,8 +37,6 @@ describe "AppRouter", ->
           sr = SpecHelper.deep_clone(Fixtures.service_request)
           sr.project_id = project_id
           SpecHelper.mock_service_request sr
-          # sr = new ServiceRequest({id: "abc123", project_id: project_id})
-          # ServerMocker.mock_model(ServiceRequest, "abc123", sr)
           ServerMocker.mock_model(Project, project_id, new Project({id: project_id}))
           runs ->
             app.prep_and_run(BarView, "abc123")
