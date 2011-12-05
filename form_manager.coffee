@@ -38,6 +38,13 @@
 #   Passing this option will allow casting (right now only to a float) in case
 #   you have data validation issues and want to sanitize data before ajax.
 #
+#  formatter:
+#   Formatter option is expected to be an object with two functions
+#     1) to_form
+#     2) from_form
+#   Takes a single argument which will be the value to be formatted and then
+#   returns the properly formatted string.
+#
 # Public API
 #
 # FormManager.populateForm(object, el, atts)
@@ -53,11 +60,11 @@ FormManager =
       if val.is_nested == true
         for k,v of ob[key]
           sel = "#{val.selector}[#{k}]"
-          @toForm(@getInput(sel), v)
+          @toForm(@getInput(sel), v, atts[key]['formatter'])
       else
         if _.isString(val)
           val = {selector : val}
-        @toForm(@getInput(@detectSelector(val)), ob[key])
+        @toForm(@getInput(@detectSelector(val)), ob[key], atts[key]['formatter'])
 
   extract: (el, atts)->
     @el = el
@@ -69,6 +76,7 @@ FormManager =
       # or it is defined by the map to capture the attribute in either visible state
       require_visible = atts[key]['require_visible']
       data_type       = atts[key]['data_type']
+      formatter       = atts[key]['formatter']
       if atts[key].is_nested == true
         inputs = $(@el).find(":input[name^='#{key}']")
         assert inputs.length >= 1,
@@ -80,6 +88,8 @@ FormManager =
         _.each inputs, (i)=>
           key = $(i).attr('name')
           val = @fromForm($(i), require_visible, data_type)
+          if formatter and _.isFunction(formatter.from_form)
+            val = formatter.from_form(val)
           [garbage, attr, option] = key.match(/(\w+)\[(\w+)\]/)
           if _.isUndefined(ob[attr])
             ob[attr] = {}
@@ -93,13 +103,17 @@ FormManager =
         selector = @detectSelector val
         input = @getInput(selector)
         value = @fromForm(input, require_visible, data_type)
+        if formatter and _.isFunction(formatter.from_form)
+          value = formatter.from_form(value)
         ob[key] = value
     ob
 
-  toForm : (input,value)->
+  toForm : (input,value,formatter)->
     if input.is(':checkbox')
       input.prop('checked', value)
     if input.is(':text')
+      if formatter and _.isFunction(formatter.to_form)
+        value = formatter.to_form(value)
       input.val value
     if input[0].tagName == "SELECT"
       input.find("option[value='#{value}']").prop("selected", true)
