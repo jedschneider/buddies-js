@@ -44,6 +44,33 @@ describe "FormManager", ->
             el.find(':input').val('12')
             expect( FormManager.extract(el, atts).some_number ).toEqual 12
 
+        describe "date", ->
+          beforeEach ->
+            atts =
+              some_date :
+                selector : 'some-date'
+                formatter:
+                  to_form   : (from_ob)->
+                    [garbage, year, month, day] = from_ob.match(/(\d{4})-(\d\d)-(\d\d)/)
+                    "#{month}/#{day}/#{year}"
+                  from_form : (input)->
+                    [garbage, month, day, year] = input.match(/(\d\d)\/(\d\d)\/(\d{4})/)
+                    "#{year}-#{month}-#{day}"
+
+          it "should populate the form with the provided format", ->
+            ob = {some_date : "2011-12-01"}
+            el = $("<form>
+                      <input type='text' name='some-date'></input>
+                    </form>")
+            FormManager.populateForm(ob, el, atts)
+            expect( $(el).find(':input') ).toHaveValue("12/01/2011")
+
+          it "should extract a date in the provided format", ->
+            el = $("<form>
+                      <input type='text' name='some-date' value='12/01/2011'>12/01/2011</input>
+                    </form>")
+            expect( FormManager.extract(el, atts).some_date ).toEqual "2011-12-01"
+
       describe "nested attribute functionality for checkboxes", ->
         beforeEach ->
           atts =
