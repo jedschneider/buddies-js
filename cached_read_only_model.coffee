@@ -20,6 +20,9 @@ CachedReadOnlyModel.extend = (args...) ->
     add_to_cache: (model) ->
       @_cache ||= {}
       @_cache[model.id] = model
+    # Useful just for testing I guess
+    clear_cache: ->
+      @_cache = {}
   return clazz
 
 CachedReadOnlyCollection = Backbone.Collection.extend
