@@ -8,6 +8,7 @@ Sparkles.Model = Backbone.Model.extend
           atts[k] = parseInt(atts[k])
     _.bind(Backbone.Model.prototype.set, @)(atts, options)
 
+# These two should be deleted as well
 Sparkles.Collection = Backbone.Collection.extend
   comparator: (obj)-> obj.get('order') || 9999.0
 
