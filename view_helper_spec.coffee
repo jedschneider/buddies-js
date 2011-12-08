@@ -1,4 +1,14 @@
 describe "ViewHelper", ->
+  describe "yes_or_no", ->
+    it "should say yes when i say true", ->
+      expect(ViewHelper.yes_or_no(true)).toEqual "Yes"
+
+    it "should say no when i say false", ->
+      expect(ViewHelper.yes_or_no(false)).toEqual "No"
+
+    it "should say no for undefined", ->
+      expect(ViewHelper.yes_or_no(undefined).toEqual "No"
+
   describe "money", ->
     it "should do the right thing with dollars and cents", ->
       expect( ViewHelper.money(1234) ).toEqual "$12.34"
