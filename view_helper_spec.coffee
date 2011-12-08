@@ -45,6 +45,13 @@ describe "ViewHelper", ->
       it "should round correctly for millions", ->
         expect( ViewHelper.money(123456780.99) ).toEqual "$1,234,567.80"
 
+  describe "percent", ->
+    it "should work", ->
+      expect(ViewHelper.percent(78)).toEqual("78%")
+
+    it "should round to one decimal place", ->
+      expect(ViewHelper.percent(27.274256)).toEqual("27.3%")
+
   describe "date", ->
     it "should format appropriately", ->
       expect(ViewHelper.date("2011-08-31 16:45:30 UTC")).toEqual "11/08/31"
