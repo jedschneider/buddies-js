@@ -45,6 +45,13 @@ describe "ViewHelper", ->
       it "should round correctly for millions", ->
         expect( ViewHelper.money(123456780.99) ).toEqual "$1,234,567.80"
 
+      it "should round up for fractional cents that are very very very very very close", ->
+        expect( ViewHelper.money(175.99999999)).toEqual "$1.76"
+
+      it "should do this math right", ->
+        x = 42 * (174456 / 42)
+        expect( ViewHelper.money(x) ).toEqual "$1,744.56"
+
   describe "percent", ->
     it "should work", ->
       expect(ViewHelper.percent(78)).toEqual("78%")
