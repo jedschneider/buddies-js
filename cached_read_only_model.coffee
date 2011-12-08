@@ -6,6 +6,10 @@
 
 CachedReadOnlyModel = Backbone.Model.extend({})
 # We override extend so that we can add static methods to the class
+#
+# REFACTOR: Backbone.Model.extend supports a second argument which
+# is class properties. We may want to investigate if that works
+# for this.
 CachedReadOnlyModel.extend = (args...) ->
   clazz = Backbone.Model.extend.apply(@, args)
   class_name = (args[0].class_name)
