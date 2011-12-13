@@ -10,7 +10,6 @@ describe "AppRouter", ->
       beforeEach ->
         SpecHelper.mock_catalog()
         SpecHelper.mock_service_request(Fixtures.service_request)
-        app = new AppRouter
         runs ->
           app.prep_and_run(FooView, "abc123")
         waits 500
