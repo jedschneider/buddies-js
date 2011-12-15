@@ -35,4 +35,4 @@ Sparkles.TotalRowHelpers =
     @
 
   total : ->
-    ViewHelper.money(_.reduce @appointment_subtotals(), ((memo, a)-> memo += a))
+    ViewHelper.money(_.reduce @appointment_subtotals(), ((memo, a)-> memo += a), 0)
