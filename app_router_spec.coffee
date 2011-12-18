@@ -31,15 +31,16 @@ describe "AppRouter", ->
             @model = opts.service_request
             @model.project = opts.project
 
-        project_id = 'abbabfebb133'
+        project_id = null
         beforeEach ->
-          sr = SpecHelper.deep_clone(Fixtures.service_request)
-          sr.project_id = project_id
+          project = Factory.project()
+          sr = Factory.service_request(project_id: project.id)
+          project_id = project.id
           SpecHelper.mock_service_request sr
-          ServerMocker.mock_model(Project, project_id, new Project({id: project_id}))
+          ServerMocker.mock_model(Project, project_id, project)
           runs ->
-            app.prep_and_run(BarView, "abc123")
-          waitsFor(->!!(Bootstrapper.current.model.project))
+            app.prep_and_run(BarView, sr.id)
+          waitsFor(->!!(Bootstrapper.current.model?.project))
 
         it "should fetch the associated project", ->
           expect(Bootstrapper.current instanceof BarView).toBeTruthy()
