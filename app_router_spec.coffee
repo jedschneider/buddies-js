@@ -34,7 +34,7 @@ describe "AppRouter", ->
         project_id = null
         beforeEach ->
           project = Factory.project()
-          sr = Factory.service_request(project_id: project.id)
+          sr = Factory.service_request(Fixtures.catalog, {project_id: project.id})
           project_id = project.id
           SpecHelper.mock_service_request sr
           ServerMocker.mock_model(Project, project_id, project)
