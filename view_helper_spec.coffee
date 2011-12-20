@@ -71,7 +71,7 @@ describe "ViewHelper", ->
 
   describe "date", ->
     it "should format appropriately", ->
-      expect(ViewHelper.date("2011-08-31 16:45:30 UTC")).toEqual "11/08/31"
+      expect(ViewHelper.date("2011-08-31 16:45:30 UTC")).toEqual "8/31/2011"
 
     it "should return a blank string if no string is given", ->
       expect(ViewHelper.date(null)).toEqual ""
