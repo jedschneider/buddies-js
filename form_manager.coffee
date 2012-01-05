@@ -69,7 +69,6 @@ FormManager =
   extract: (el, atts)->
     @el = el
     ob = {}
-
     _.each _.keys(atts), (key)=>
 
       # the attribute is defined by the map to only be saved if it is visible
@@ -111,11 +110,11 @@ FormManager =
   toForm : (input,value,formatter)->
     if input.is(':checkbox')
       input.prop('checked', value)
-    if input.is(':text')
+    else if input.is(':text')
       if formatter and _.isFunction(formatter.to_form)
         value = formatter.to_form(value)
       input.val value
-    if input[0].tagName == "SELECT"
+    else if input[0].tagName == "SELECT"
       input.find("option[value='#{value}']").prop("selected", true)
 
   fromForm : (input, require_visible, data_type)->
