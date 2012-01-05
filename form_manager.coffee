@@ -110,7 +110,7 @@ FormManager =
   toForm : (input,value,formatter)->
     if input.is(':checkbox')
       input.prop('checked', value)
-    else if input.is(':text')
+    else if input.is(':text') or input[0].tagName == "TEXTAREA"
       if formatter and _.isFunction(formatter.to_form)
         value = formatter.to_form(value)
       input.val value
@@ -119,7 +119,7 @@ FormManager =
 
   fromForm : (input, require_visible, data_type)->
       if (require_visible and input.is(':visible'))  or  !require_visible
-        if input.is(':text')
+        if input.is(':text') or input[0].tagName == "TEXTAREA"
           value = if data_type then @castValue(input.val(), data_type) else input.val()
         if input.is(':checkbox')
           value = input.is(":checked")
