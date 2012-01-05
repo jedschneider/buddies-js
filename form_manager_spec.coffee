@@ -90,7 +90,7 @@ describe "FormManager", ->
 
         it "should extract the attributes from the form", ->
           expect(FormManager.extract(el, atts).pets).toEqual ob.pets
-          
+
       describe "nested attribute functionality for select tags", ->
         beforeEach ->
           atts =
@@ -173,6 +173,21 @@ describe "FormManager", ->
 
     it "should populate form", ->
       expect( $(el).find(":input") ).toHaveValue "Foo"
+
+    it "should extract from the form", ->
+      expect( FormManager.extract(el, atts).short_title ).toEqual "Foo"
+
+  describe "for a textarea", ->
+    beforeEach ->
+      el = $("<form><textarea name='short-title'></textarea></form>")
+      atts =
+        short_title :
+          selector : 'short-title'
+      ob = {short_title : "Foo"}
+      FormManager.populateForm ob, el, atts
+
+    it "should populate form", ->
+      expect( $(el).find("textarea[name=short-title]") ).toHaveValue "Foo"
 
     it "should extract from the form", ->
       expect( FormManager.extract(el, atts).short_title ).toEqual "Foo"
