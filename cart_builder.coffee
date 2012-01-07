@@ -9,25 +9,23 @@ CartBuilder =
       $('.right').prepend(cv.render().el)
 
     if model.line_items.length > 0
-      services = model.services()
+      services = model.line_items.invoke('service')
 
       # Attach the services to the line_items and trigger event so the cartview
       # will show them
-      success = =>
-        $('.right #services #my_services').empty()
-        model.line_items.each (line_item) ->
-          CartBuilder.add_line_item(line_item, model)
+      $('.right #services #my_services').empty()
+      model.line_items.each (line_item) ->
+        CartBuilder.add_line_item(line_item, model)
 
-        # add striping to cart items
-        odd = false
-        $('#my_services div.line_item').each( ->
-          $(@).addClass('odd') if odd
-          odd = !odd
-          return @
-        )
-
+      # add striping to cart items
+      odd = false
+      $('#my_services div.line_item').each( ->
+        $(@).addClass('odd') if odd
+        odd = !odd
         return @
-      services.fetch(success: success)
+      )
+
+      return @
     else
       $('.right #services #my_services').empty()
 
