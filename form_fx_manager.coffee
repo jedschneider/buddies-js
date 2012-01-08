@@ -1,5 +1,5 @@
 # FormFxManager : because who doesn't need a little bit of visual Fx in their form?
-# 
+#
 # This namespace handles the display state of dependent inputs through a map of
 # dependencies.
 # Then you can declare stuff instead of writing jQuery til the cows come home.
@@ -48,7 +48,6 @@ FormFxManager =
         val = FormFxManager.getValue( inputs(key) )
         should_be_visible = vals[val]
         should_be_hidden = _.difference dependents, vals[val]
-
         _.each should_be_visible, (d)->
           inputs(d).show()
           if atts[d]
