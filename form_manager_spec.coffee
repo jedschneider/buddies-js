@@ -194,7 +194,7 @@ describe "FormManager", ->
 
   describe "for a checkbox", ->
     beforeEach ->
-      el = $("<form><input type='checkbox' name='checker'></input><form>")
+      el = $("<form><input type='checkbox' name='checker'></input></form>")
       atts = {checker : {selector: 'checker'}}
       ob = {checker : true}
       FormManager.populateForm ob, el, atts
