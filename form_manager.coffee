@@ -118,20 +118,16 @@ FormManager =
       input.find("option[value='#{value}']").prop("selected", true)
 
   fromForm : (input, require_visible, data_type)->
-      if (require_visible and input.is(':visible'))  or  !require_visible
-        if input.is(':text') or input[0].tagName == "TEXTAREA"
-          value = if data_type then @castValue(input.val(), data_type) else input.val()
-        if input.is(':checkbox')
-          value = input.is(":checked")
-        if input[0].tagName == "SELECT"
-          rejects = for v in input.find("option:not([value])")
-            $(v).val()
-          tmp = input.find("option:selected").val()
-          if _.any(rejects, (r)-> r == tmp)
-            value = undefined
-          else
-            value = input.find("option:selected").val()
-        value
+    if (require_visible and input.is(':visible'))  or  !require_visible
+      if input.is(':text') or input[0].tagName == "TEXTAREA"
+        value = if data_type then @castValue(input.val(), data_type) else input.val()
+      if input.is(':checkbox')
+        value = input.is(":checked")
+      if input[0].tagName == "SELECT"
+        opt = input.find("option:selected")
+        has_value_att = !!(opt[0].getAttribute('value'))
+        value = if has_value_att then opt.val() else undefined
+      value
 
   castValue : (val, data_type)->
     if data_type == "number"
