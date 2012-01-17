@@ -3,7 +3,7 @@ CartBuilder =
     cv = new CartView(model: model)
 
     unless $('.right #services').length
-      unless Bootstrapper.current instanceof CatalogView
+      unless app.view.current instanceof CatalogView
         $('.right').prepend("<img src=\"images/back_to_catalog.png\" class=\"return-to-catalog\">")
 
       $('.right').prepend(cv.render().el)
