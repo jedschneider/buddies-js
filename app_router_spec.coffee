@@ -11,15 +11,15 @@ describe "AppRouter", ->
         SpecHelper.mock_catalog()
         SpecHelper.mock_service_request(Fixtures.service_request)
         runs ->
-          app.prep_and_run(FooView, "abc123")
+          app.view.bootstrap(FooView, "abc123")
         waits 500
 
       it "should bootstrap the DOM with the appropriate view", ->
         runs ->
-          expect(Bootstrapper.current instanceof FooView).toBeTruthy()
+          expect(app.view.current instanceof FooView).toBeTruthy()
 
       it "should set the View with the correct ServiceRequest object", ->
-          expect(Bootstrapper.current.model.id).toEqual "abc123"
+          expect(app.view.current.model.id).toEqual "abc123"
 
       describe "and a project", ->
         BarView = Backbone.View.extend
@@ -39,12 +39,12 @@ describe "AppRouter", ->
           SpecHelper.mock_service_request sr
           ServerMocker.mock_model(Project, project_id, project)
           runs ->
-            app.prep_and_run(BarView, sr.id)
-          waitsFor(->!!(Bootstrapper.current.model?.project))
+            app.view.bootstrap(BarView, sr.id)
+          waitsFor(->!!(app.view.current.model?.project))
 
         it "should fetch the associated project", ->
-          expect(Bootstrapper.current instanceof BarView).toBeTruthy()
+          expect(app.view.current instanceof BarView).toBeTruthy()
 
         it "should get the right project", ->
           runs ->
-            expect(Bootstrapper.current.model.project.get('id')).toEqual project_id
+            expect(app.view.current.model.project.get('id')).toEqual project_id
