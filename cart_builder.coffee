@@ -17,21 +17,27 @@ CartBuilder =
       model.line_items.each (line_item) ->
         CartBuilder.add_line_item(line_item, model)
 
-      # add striping to cart items
-      odd = false
-      $('#my_services div.line_item').each( ->
-        $(@).addClass('odd') if odd
-        odd = !odd
-        return @
-      )
+      @restripe()
 
       return @
     else
       $('.right #services #my_services').empty()
 
+  restripe: ->
+    odd = false
+    $('#my_services div.line_item').each( ->
+      if odd
+        $(@).addClass('odd')
+      else
+        $(@).removeClass('odd')
+      odd = !odd
+      return @
+    )
+
   add_line_item: (li, service_request) ->
     civ = new CartItemView(model: li, service_request: service_request)
     $('#my_services').append(civ.render().el)
+    @restripe()
 
   remove_line_item: (li, service_request) ->
     sas = li.service().service_associations()
