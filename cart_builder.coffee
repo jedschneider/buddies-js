@@ -1,3 +1,9 @@
+# REFACTOR: This functionality could all be folded into the CartView
+# and the models. The trickiest part is the service associations. One
+# idea to avoid the asynchronicity of having to call for the associations
+# is to add a key to auto-added line items that points to the service
+# it was added with. Perhaps "associated_with". Then it would be easy
+# to change the "optional" flags when something gets removed.
 CartBuilder =
   create_cart: (model) ->
     cv = new CartView(model: model)
