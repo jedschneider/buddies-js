@@ -48,3 +48,27 @@ describe "AppRouter", ->
         it "should get the right project", ->
           runs ->
             expect(app.view.current.model.project.get('id')).toEqual project_id
+
+  describe "Adding new services", ->
+    spy = null
+    beforeEach ->
+      spy = ServerMocker.accept_create ServiceRequest, 'abc346'
+      SpecHelper.mock_current_user()
+      SpecHelper.mock_catalog()
+      ServerMocker.mock_model ServiceRequest, 'abc346',
+        project_id: '2985'
+        line_items: []
+        sub_service_requests: {}
+      project = Factory.project(id: "2985")
+      ServerMocker.mock_model Project, project.id, project
+      runs ->
+        app.navigate("projects/2985/add_services", true)
+      SpecHelper.waitsForView CatalogView
+
+    it "should create a new service request", ->
+      expect(spy).toHaveBeenCalled()
+      atts = spy.mostRecentCall.args[3]
+      expect(atts.project_id).toEqual '2985'
+
+    it "should go to the catalog view for the new service request", ->
+      expect(app.view.current.model.id).toEqual 'abc346'
