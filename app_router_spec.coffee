@@ -37,7 +37,7 @@ describe "AppRouter", ->
           sr = Factory.service_request(Fixtures.catalog, {project_id: project.id})
           project_id = project.id
           SpecHelper.mock_service_request sr
-          ServerMocker.mock_model(Project, project_id, project)
+          ServerMocker.mock_model(Project, project)
           runs ->
             app.view.bootstrap(BarView, sr.id)
           waitsFor(->!!(app.view.current.model?.project))
@@ -55,12 +55,13 @@ describe "AppRouter", ->
       spy = ServerMocker.accept_create ServiceRequest, 'abc346'
       SpecHelper.mock_current_user()
       SpecHelper.mock_catalog()
-      ServerMocker.mock_model ServiceRequest, 'abc346',
+      ServerMocker.mock_model ServiceRequest,
+        id: 'abc346'
         project_id: '2985'
         line_items: []
         sub_service_requests: {}
       project = Factory.project(id: "2985")
-      ServerMocker.mock_model Project, project.id, project
+      ServerMocker.mock_model Project, project
       runs ->
         app.navigate("projects/2985/add_services", true)
       SpecHelper.waitsForView CatalogView
