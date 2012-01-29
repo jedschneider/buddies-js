@@ -33,7 +33,13 @@ describe "FormManager", ->
             some_number :
               selector  : 'some-number'
               data_type : 'number'
-          el = $("<form><input type='text' name='some-number'></input></form>")
+            some_integer:
+              selector  : 'some-integer'
+              data_type : 'integer'
+          el = $("""<form>
+                      <input type='text' name='some-number'></input>
+                      <input type='text' name='some-integer'></input>
+                    </form>""")
 
         describe "number", ->
 
@@ -41,8 +47,19 @@ describe "FormManager", ->
             expect( _.isNumber(FormManager.extract(el, atts).some_number) ).toBeTruthy()
 
           it "should use the number in the field if it got it", ->
-            el.find(':input').val('12')
+            el.find(':input[name=some-number]').val('12')
             expect( FormManager.extract(el, atts).some_number ).toEqual 12
+
+        describe "integer", ->
+          it "should not return a float", ->
+            el.find(':input[name=some-integer]').val('8.5')
+            expect( FormManager.extract(el, atts).some_integer ).not.toEqual 8.5
+
+          it "should return an integer", ->
+            el.find(':input[name=some-integer]').val('78')
+            val = FormManager.extract(el, atts).some_integer
+            expect( _.isNumber(val) ).toBeTruthy()
+            expect( val ).toEqual 78
 
         describe "date", ->
           beforeEach ->
