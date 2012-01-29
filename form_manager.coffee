@@ -35,8 +35,7 @@
 #   descriptions.
 #
 #  data_type:
-#   Passing this option will allow casting (right now only to a float) in case
-#   you have data validation issues and want to sanitize data before ajax.
+#   Basic type casting. Currently supported values are "number" and "integer"
 #
 #  formatter:
 #   Formatter option is expected to be an object with two functions
@@ -130,9 +129,12 @@ FormManager =
       value
 
   castValue : (val, data_type)->
-    if data_type == "number"
-      foo = parseFloat(val)
-      if _.isNaN(foo) then 0 else foo
+    switch data_type
+      when "number"
+        foo = parseFloat(val)
+        if _.isNaN(foo) then 0 else foo
+      when "integer"
+        parseInt(val)
 
   getInput: (selector)->
     [garbage, class_name, selector_id, name] = selector.match /(^\..*)|(^\#.*)|(^.*)/
