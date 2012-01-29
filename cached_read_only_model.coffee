@@ -1,8 +1,6 @@
 # The Service Catalog is read-only for this app, and we gain a lot of
 # simplicity by caching it. Is stale data bad? What's the worst that can happen
 # when somebody updates the service catalog and we don't see it right away?
-#
-# TODO: How do we clear these caches between tests???
 
 CachedReadOnlyModel = Backbone.Model.extend({})
 # We override extend so that we can add static methods to the class
