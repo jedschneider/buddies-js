@@ -19,3 +19,11 @@ _.mixin
         return ret
     else
       return ob
+  # Like _.wrap, but takes care of assigning the wrapped method back on as
+  # a property, and also takes care of binding the old function for you so
+  # you can call it in the normal manner.
+  wrapMethod: (ob, meth_name, wrapper) ->
+    old = ob[meth_name]
+    ob[meth_name] = (args...) ->
+      self = @
+      wrapper.call(@, _.bind(old, @), args...)
