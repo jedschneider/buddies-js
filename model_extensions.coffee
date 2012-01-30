@@ -87,3 +87,6 @@ Backbone.Collection.define_extension 'cached', (klazz, {fetch_once}) ->
           @_fetched = true
           success()
         func(opts)
+
+Backbone.Collection.define_extension 'ordered_by_attribute', (klazz) ->
+  klazz::comparator = (model) -> (model.get('order') || 99999)
