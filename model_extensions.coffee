@@ -45,8 +45,7 @@ Backbone.Model.define_extension "unpersisted_changes", (klazz) ->
 # simplicity by caching it. Is stale data bad? What's the worst that can happen
 # when somebody updates the service catalog and we don't see it right away?
 
-Backbone.Model.define_extension 'cached', (klazz) ->
-  class_name = klazz::class_name
+Backbone.Model.define_extension 'cached', (klazz, class_name) ->
   _.extend klazz,
     find: (id) ->
       if(x = (@_cache and @_cache[id]))
