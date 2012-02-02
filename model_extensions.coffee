@@ -90,3 +90,14 @@ Backbone.Collection.define_extension 'cached', (klazz, {fetch_once}) ->
 
 Backbone.Collection.define_extension 'ordered_by_attribute', (klazz) ->
   klazz::comparator = (model) -> (model.get('order') || 99999)
+
+# Argument should be a method name. This method will be called after
+# a successful fetch, and will be given the user supplied callback
+# as its first argument (i.e., it is expected that you will call the
+# callback yourself at some point).
+Backbone.Model.define_extension 'fetch_hook', (klazz, m_name) ->
+  _.wrapMethod klazz::, 'fetch', (old_fetch, opts) ->
+    success = opts.success or ->
+    opts.success = (args...) =>
+      @[m_name]((-> success(args...)), args...)
+    old_fetch(opts)
