@@ -11,7 +11,7 @@ FormHelpers =
       "<input type='checkbox' class='#{name}' name='#{name}'></input>"
   text_area_tag: (name) -> "<textarea class='#{name}' name='#{name}'></textarea>"
   radio_button_tag: (name, value, checked = false) ->
-    "<input type='radio'#{checked ? ' checked="checked"' : ''} class='#{name}' name='#{name}' value='#{value}'></input>"
+    "<input type='radio'#{if checked then ' checked="checked"' else ''} class='#{name}' name='#{name}' value='#{value}'></input>"
 
 # Aliases
 FormHelpers.label_for = FormHelpers.label_tag
