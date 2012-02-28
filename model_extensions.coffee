@@ -106,3 +106,11 @@ Backbone.Model.define_extension 'fetch_hook', _fetch_hook_extender
 # does that have any negative implications for how we fetch collections
 # in our app code (i.e., stuff being run too early)?
 Backbone.Collection.define_extension 'fetch_hook', _fetch_hook_extender
+
+# Much like the fetch_hook extension
+Backbone.Model.define_extension 'post_save_hook', (klazz, m_name) ->
+  _.wrapMethod klazz::, 'save', (old_save, atts, opts = {}) ->
+    success = opts.success or ->
+    opts.success = (args...) =>
+      @[m_name]((-> success(args...)), args...)
+    old_save(atts, opts)
