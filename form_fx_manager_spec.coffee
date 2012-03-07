@@ -22,12 +22,18 @@ describe "FormFxManager", ->
       expect( foo() ).toBeVisible()
       expect( bar() ).not.toBeVisible()
       foo().prop("checked", true).change()
-    waits 10
+    waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
 
   uncheck_foo = ->
     runs ->
       foo().prop("checked", false).change()
     waits 10
+
+  check_foo_and_bar = ->
+    check_foo()
+    runs ->
+      bar().prop('checked', true).change()
+    waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
 
   describe "a checkbox", ->
 
@@ -106,11 +112,7 @@ describe "FormFxManager", ->
           expect( gary() ).toBeHidden()
 
       it "should show bar when foo is checked then gary when bar is checked", ->
-        check_foo()
-        waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
-        runs ->
-          bar().prop('checked', true).change()
-        waitsFor((-> bar().is(':checked')), 1000, 'bar to be checked')
+        check_foo_and_bar()
         runs ->
           expect( gary() ).toBeVisible()
 
@@ -143,11 +145,7 @@ describe "FormFxManager", ->
           expect( gary() ).toBeVisible()
 
       it "should show bar when foo is checked then hide gary when bar is checked", ->
-        check_foo()
-        waitsFor((-> bar().is(':visible')), 1000, "bar should be visible")
-        runs ->
-          bar().prop('checked', true).change()
-        waitsFor((-> bar().is(':checked')), 1000, 'bar to be checked')
+        check_foo_and_bar()
         runs ->
           expect( gary() ).toBeHidden()
 
