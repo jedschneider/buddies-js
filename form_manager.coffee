@@ -124,8 +124,8 @@ FormManager =
         value = input.is(":checked")
       if input[0].tagName == "SELECT"
         opt = input.find("option:selected")
-        has_value_att = !!(opt[0].getAttribute('value'))
-        value = if has_value_att then opt.val() else undefined
+        has_value_att = -> !!(opt[0].getAttribute('value'))
+        value = if opt[0] and has_value_att() then opt.val() else undefined
       value
 
   castValue : (val, data_type)->
