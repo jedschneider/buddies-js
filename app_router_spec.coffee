@@ -70,6 +70,7 @@ describe "AppRouter", ->
       expect(spy).toHaveBeenCalled()
       atts = spy.mostRecentCall.args[3]
       expect(atts.project_id).toEqual '2985'
+      expect(atts.service_requester_id).toEqual Fixtures.user.id
 
     it "should go to the catalog view for the new service request", ->
       expect(app.view.current.model.id).toEqual 'abc346'
