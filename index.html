@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Buddies-js by HSSC</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Buddies-js</h1>
+        <p>A select group of javacript helpers we use to make life easier</p>
+        <p class="view"><a href="https://github.com/HSSC/buddies-js">View the Project on GitHub <small>HSSC/buddies-js</small></a></p>
+        <ul>
+          <li><a href="https://github.com/HSSC/buddies-js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/HSSC/buddies-js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/HSSC/buddies-js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>buddies.js</h1>
+
+<p>A collection of maybe helpful javascripts (written in coffeescript) to support form management.</p>
+
+<p>Users like dynamic forms, but often in the development process, there is a bleeding of responsibility between getting data out of the form and display. buddies.js tries to solve this by providing two namespaces that work together to accomplish this task, but maintains a clear line in the sand between these two needs. </p>
+
+<p>Secondly, these two classes intend to remove the vast majority of logic based watchers that tend to add up in dynamic user forms. For Example: if this value is selected in form element foo, then show bar, otherwise show baz. </p>
+
+<p>Data as code. The nature of this dynamic form building makes it really difficult to follow and respond to changes in stakeholder requirements. Instead of representing these imperatively in code, this project represents the relationships with data. It makes for some fairly opinionated assumptions about this process, but provide some unique options to support various constructs. See usage and specs for specific examples.</p>
+
+<p>This code was extracted from a fairly large and complicated backbone.js app where this type of form interaction was fairly common. It probably works well in any javascript framework, but its been battle testing in backbone.</p>
+
+<h2>Requirements</h2>
+
+<p>for usage: jquery, underscrore</p>
+
+<p>for testing : jquery, jasmine-jquery, underscore, jasmine</p>
+
+<p>all these dependencies are in the vendor directories.</p>
+
+<h2>Usage</h2>
+
+<p>If you just want to use the javascript, the compiled javascript is in the lib directory. If you want to include the coffeescript, the specific build process is up to you.</p>
+
+<p>The specs provide the best list of examples for the various ways to use buddies.js. Here are a couple of short examples to get you started.</p>
+
+<h3>FormManager</h3>
+
+<p>Most of the time, you just want to get the data in and out, so lets say you have a form like:</p>
+
+<div class="highlight">
+<pre><span class="nt">&lt;form</span> <span class="na">id=</span><span class="s">"foo"</span><span class="nt">&gt;&lt;input</span> <span class="na">type=</span><span class="s">'text'</span> <span class="na">name=</span><span class="s">'short-title'</span><span class="nt">&gt;&lt;/input&gt;&lt;/form&gt;</span>
+</pre>
+</div>
+
+
+<p>and you might be populating the form with data, from say, an ajax request</p>
+
+<div class="highlight">
+<pre><span class="nv">ob = </span><span class="p">{</span><span class="nv">short_title : </span><span class="s">"Foo"</span><span class="p">}</span>
+</pre>
+</div>
+
+
+<p>to set the data from this object into the form we provide a simple map that points from the object attribute to the selector name:</p>
+
+<div class="highlight">
+<pre><span class="nv">el = </span><span class="nx">$</span><span class="p">(</span><span class="s">"</span><span class="err">#</span><span class="s">foo"</span><span class="p">)</span> <span class="c1"># the html above</span>
+<span class="c1"># use the object attribute short_title and put it in the short-title form input</span>
+<span class="nv">atts = </span><span class="p">{</span><span class="nv">short_title : </span><span class="s">'short-title'</span><span class="p">}</span>
+
+<span class="nx">FormManager</span><span class="p">.</span><span class="nx">populateForm</span> <span class="nx">ob</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">atts</span>
+</pre>
+</div>
+
+
+<p>see how easy that was? Now we want to get the data back out of the form, presumably to send back via ajax on submit, or save, ..or something:</p>
+
+<div class="highlight">
+<pre><span class="nx">$</span><span class="p">(</span><span class="s">"</span><span class="err">#</span><span class="s">foo:input"</span><span class="p">)</span><span class="nx">val</span><span class="p">(</span><span class="s">"Bar"</span><span class="p">).</span><span class="nx">change</span><span class="p">()</span>
+<span class="c1"># asyncrhonus eventing, but simplifed here as if it were not, see specs for working example</span>
+<span class="nv">my_ob = </span><span class="nx">FormManager</span><span class="p">.</span><span class="nx">extract</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">atts</span><span class="p">)</span>
+<span class="nx">my_ob</span><span class="p">.</span><span class="nx">short_title</span> <span class="c1">#=&gt; "Bar"</span>
+</pre>
+</div>
+
+
+<p>And now, you can ajax away your new object elements.</p>
+
+<p>The form manager supports nested attributes, data types, and formatting functions. See the src and specs for examples. One option to briefly touch on here is the require_visible option. It is typically assumed that you only want to persist data for elements that are visible. For example in a form where there are two options and each option has a set of sub-options, if the user fills out sub-options for option A and then changes their mind and picks option B, that the data for sub-options A are no longer desirable to persist (since the user change their mind). It may also be the case that hidden options provide real data that needs to be saved. The short hand notation above assumes visibility. The longhand form can be more specific:</p>
+
+<div class="highlight">
+<pre><span class="nv">atts =</span>
+  <span class="nv">short_title :</span>
+    <span class="nv">selector : </span><span class="s">'short-title'</span>
+    <span class="nv">require_visible : </span><span class="kc">false</span>
+</pre>
+</div>
+
+
+<p>Note, however that the longhand does not assume it knows the selector in the form form so it needs to be passed as an attribute as well. We have had the most success doing this type of data structure manipulation programatically.</p>
+
+<h3>FormFxManager</h3>
+
+<p>FormFxManager handles the display state of dependent inputs based on the state of the parent input.</p>
+
+<p>Example:</p>
+
+<div class="highlight">
+<pre><span class="nv">visual_deps : </span><span class="p">{</span><span class="s">'foo'</span> <span class="o">:</span> <span class="p">{</span>
+                <span class="s">'true'</span> <span class="o">:</span> <span class="p">[</span><span class="s">'bar'</span><span class="p">,</span> <span class="s">'baz'</span><span class="p">]</span>
+               <span class="p">,</span><span class="s">'false'</span> <span class="o">:</span> <span class="p">[</span><span class="s">'raz'</span><span class="p">]}</span>
+               <span class="p">,</span><span class="s">'baz'</span> <span class="o">:</span> <span class="p">{</span><span class="s">'scary'</span> <span class="o">:</span> <span class="s">'boo'</span><span class="p">}}</span>
+</pre>
+</div>
+
+
+<p>In this case, when 'foo' (either a checkbox or a textfield, it doesn't matter) is either selected or some text is entered, the inputs 'bar' and 'baz' will be visible. Clearing the field or unchecking the box will hide those fields, but will show 'raz'. When 'foo' is checked, the manager knows that 'baz' (a select tag with an option 'scary') also has a dependency but will wait for the selected option of 'baz' to be selected before showing the dependent input 'boo'.</p>
+
+<p>Using the FormFxManager just requires you tell it what the form is, and pass the dependency map:</p>
+
+<div class="highlight">
+<pre><span class="nx">FormFxManager</span><span class="p">.</span><span class="nx">registerListeners</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s">"</span><span class="err">#</span><span class="s">myform"</span><span class="p">),</span> <span class="nx">visual_deps</span><span class="p">)</span>
+</pre>
+</div>
+
+
+<h2>Install</h2>
+
+<p>There is nothing really to install.</p>
+
+<h2>License</h2>
+
+<p>MIT</p>
+
+<p>Copyright (c) 2012 Office of Biomedical Informatics Services - MUSC</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+<h2>Contribute</h2>
+
+<p>Fork, and submit a pull request. We'll work with you to get you contribution included.</p>
+
+<h2>Support</h2>
+
+<p>This software is released without warranty or support, that said, open an issue if you have a beef.</p>
+
+<h2>Testing</h2>
+
+<p>Jasmine tests are available by loading the SpecRunner.html file into your browser.</p>
+
+<h2>Credits</h2>
+
+<p>core contributors: <a href="http://github.com/jedschneider">Jed Schneider</a>, <a href="http://github.com/fredericksgary">Gary Fredericks</a></p>
+
+<p>contributions: <a>Matt Scott</a>, <a>Andrew Cates</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/HSSC">HSSC</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
