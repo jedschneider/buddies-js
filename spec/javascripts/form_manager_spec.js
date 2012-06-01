@@ -1,7 +1,7 @@
 describe("FormManager", function() {
   var atts, el, fm, ob;
   el = atts = ob = fm = null;
-  describe("populateForm", function() {
+  describe("populate", function() {
     return describe("using a name attribute", function() {
       describe("basic functionality", function() {
         beforeEach(function() {
@@ -16,13 +16,13 @@ describe("FormManager", function() {
         });
         it("should find the DOM element when the key and value are different", function() {
           el = $("<form><input type='text' name='short-title'></input></form>");
-          FormManager.populateForm(ob, el, atts);
+          FormManager.populate(ob, el, atts);
           return expect($(el).find(":input")).toHaveValue("Foo");
         });
         it("should not find the DOM element when the value is similar", function() {
           el = $("<form><input type='text' name='short-title-longer'></input></form>");
           return expect(function() {
-            return FormManager.populateForm(ob, el, atts);
+            return FormManager.populate(ob, el, atts);
           }).toThrow();
         });
         return it("should allow the default implementation of a string for a selector", function() {
@@ -30,7 +30,7 @@ describe("FormManager", function() {
           atts = {
             short_title: 'short-title'
           };
-          FormManager.populateForm(ob, el, atts);
+          FormManager.populate(ob, el, atts);
           return expect($(el).find(":input")).toHaveValue("Foo");
         });
       });
@@ -95,7 +95,7 @@ describe("FormManager", function() {
               some_date: "2011-12-01"
             };
             el = $("<form>                      <input type='text' name='some-date'></input>                    </form>");
-            FormManager.populateForm(ob, el, atts);
+            FormManager.populate(ob, el, atts);
             return expect($(el).find(':input')).toHaveValue("12/01/2011");
           });
           return it("should extract a date in the provided format", function() {
@@ -120,7 +120,7 @@ describe("FormManager", function() {
             }
           };
           el = $("<form id='myform'>                    <input type='checkbox' name='pets[dogs]'></input>                    <input type='checkbox' name='pets[cats]'></input>                    <input type='checkbox' name='pets[birds]'></input>                  </form>");
-          return FormManager.populateForm(ob, el, atts);
+          return FormManager.populate(ob, el, atts);
         });
         it("should populate the form with nested attributes", function() {
           return expect($(el).find(":checked").length).toEqual(2);
@@ -144,7 +144,7 @@ describe("FormManager", function() {
             }
           };
           el = $("            <form id='myform'>              <select name='pets[dogs]'>                <option>Select a Dog</option>                <option value='beagle'>Beagle</option>                <option value='coonhound'>Coonhound</option>              </select>              <select name='pets[birds]'>                <option>Select A Bird</option>                <option value='macaw'>Macaw</option>                <option value='cockatoo'>Cockatoo</option>              </select>            </form>");
-          return FormManager.populateForm(ob, el, atts);
+          return FormManager.populate(ob, el, atts);
         });
         it("should fill out the form", function() {
           expect(el.find('select[name="pets[dogs]"] option[value="beagle"]')).toBeSelected();
@@ -178,7 +178,7 @@ describe("FormManager", function() {
             }
           };
           el = $("            <form id='myform'>              <input name='short-title' style='display: inline;'></input>              <input name='long-title' style='display: inline;'></input>            </form>");
-          FormManager.populateForm(ob, el, atts);
+          FormManager.populate(ob, el, atts);
           return $("body").append(el);
         });
         afterEach(function() {
@@ -224,7 +224,7 @@ describe("FormManager", function() {
       ob = {
         short_title: "Foo"
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should populate form", function() {
       return expect($(el).find(":input")).toHaveValue("Foo");
@@ -244,7 +244,7 @@ describe("FormManager", function() {
       ob = {
         short_title: "Foo"
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should populate form", function() {
       return expect($(el).find("textarea[name=short-title]")).toHaveValue("Foo");
@@ -264,7 +264,7 @@ describe("FormManager", function() {
       ob = {
         checker: true
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should populate the form", function() {
       return expect($(el).find(":input")).toBeChecked();
@@ -284,7 +284,7 @@ describe("FormManager", function() {
       ob = {
         zat: 'that'
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should populate the form with the appropriate option selected", function() {
       return expect($(el).find('option[value=that]')).toBeSelected();
@@ -317,7 +317,7 @@ describe("FormManager", function() {
       ob = {
         short_title: "Bar"
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should find the DOM element and populate the form", function() {
       return expect($(el).find(".info")).toHaveValue("Bar");
@@ -337,7 +337,7 @@ describe("FormManager", function() {
       ob = {
         short_title: "Bar"
       };
-      return FormManager.populateForm(ob, el, atts);
+      return FormManager.populate(ob, el, atts);
     });
     it("should find the DOM element and populuate the form", function() {
       return expect($(el).find("#info")).toHaveValue("Bar");

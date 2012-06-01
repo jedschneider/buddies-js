@@ -46,12 +46,12 @@
 #
 # Public API
 #
-# FormManager.populateForm(object, el, atts)
+# FormManager.populate(object, el, atts)
 # FormManager.extract(el, atts)
 #_________________________________________________________________________
 FormManager =
 
-  populateForm : (ob, el, atts)->
+  populate : (ob, el, atts)->
     _.each _.keys(atts), (key) =>
       # normalize the default case to a map
       val = atts[key]

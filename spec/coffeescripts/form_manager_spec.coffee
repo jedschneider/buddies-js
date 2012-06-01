@@ -1,6 +1,6 @@
 describe "FormManager", ->
   el = atts = ob = fm = null
-  describe "populateForm", ->
+  describe "populate", ->
     describe "using a name attribute", ->
       describe "basic functionality", ->
         beforeEach ->
@@ -11,19 +11,19 @@ describe "FormManager", ->
 
         it "should find the DOM element when the key and value are different", ->
           el = $("<form><input type='text' name='short-title'></input></form>")
-          FormManager.populateForm ob, el, atts
+          FormManager.populate ob, el, atts
 
           expect( $(el).find(":input") ).toHaveValue "Foo"
 
         it "should not find the DOM element when the value is similar", ->
           el = $("<form><input type='text' name='short-title-longer'></input></form>")
 
-          expect( -> FormManager.populateForm(ob, el, atts) ).toThrow()
+          expect( -> FormManager.populate(ob, el, atts) ).toThrow()
 
         it "should allow the default implementation of a string for a selector", ->
           el = $("<form><input type='text' name='short-title'></input></form>")
           atts = {short_title : 'short-title'}
-          FormManager.populateForm ob, el, atts
+          FormManager.populate ob, el, atts
 
           expect( $(el).find(":input") ).toHaveValue "Foo"
 
@@ -79,7 +79,7 @@ describe "FormManager", ->
             el = $("<form>
                       <input type='text' name='some-date'></input>
                     </form>")
-            FormManager.populateForm(ob, el, atts)
+            FormManager.populate(ob, el, atts)
             expect( $(el).find(':input') ).toHaveValue("12/01/2011")
 
           it "should extract a date in the provided format", ->
@@ -100,7 +100,7 @@ describe "FormManager", ->
                     <input type='checkbox' name='pets[cats]'></input>
                     <input type='checkbox' name='pets[birds]'></input>
                   </form>")
-          FormManager.populateForm ob, el, atts
+          FormManager.populate ob, el, atts
 
         it "should populate the form with nested attributes", ->
           expect( $(el).find(":checked").length ).toEqual 2
@@ -128,7 +128,7 @@ describe "FormManager", ->
                 <option value='cockatoo'>Cockatoo</option>
               </select>
             </form>")
-          FormManager.populateForm ob, el, atts
+          FormManager.populate ob, el, atts
 
         it "should fill out the form", ->
           expect( el.find('select[name="pets[dogs]"] option[value="beagle"]') ).toBeSelected()
@@ -155,7 +155,7 @@ describe "FormManager", ->
               <input name='short-title' style='display: inline;'></input>
               <input name='long-title' style='display: inline;'></input>
             </form>")
-          FormManager.populateForm ob, el, atts
+          FormManager.populate ob, el, atts
           $("body").append(el)
 
         afterEach ->
@@ -186,7 +186,7 @@ describe "FormManager", ->
         short_title :
           selector : 'short-title'
       ob = {short_title : "Foo"}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should populate form", ->
       expect( $(el).find(":input") ).toHaveValue "Foo"
@@ -201,7 +201,7 @@ describe "FormManager", ->
         short_title :
           selector : 'short-title'
       ob = {short_title : "Foo"}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should populate form", ->
       expect( $(el).find("textarea[name=short-title]") ).toHaveValue "Foo"
@@ -214,7 +214,7 @@ describe "FormManager", ->
       el = $("<form><input type='checkbox' name='checker'></input></form>")
       atts = {checker : {selector: 'checker'}}
       ob = {checker : true}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should populate the form", ->
       expect( $(el).find(":input") ).toBeChecked()
@@ -230,7 +230,7 @@ describe "FormManager", ->
         </input></form>")
       atts = {zat : {selector : 'zat'}}
       ob = {zat : 'that'}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should populate the form with the appropriate option selected", ->
       expect( $(el).find('option[value=that]') ).toBeSelected()
@@ -259,7 +259,7 @@ describe "FormManager", ->
       el = $("<form><input class='info' type='text' name='short-title'></input></form>")
       atts = {short_title : {selector : ".info"}}
       ob = {short_title : "Bar"}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should find the DOM element and populate the form", ->
       expect( $(el).find(".info") ).toHaveValue "Bar"
@@ -272,7 +272,7 @@ describe "FormManager", ->
       el = $("<form><input id='info' type='text' name='short-title'></input></form>")
       atts = {short_title : {selector : '#info'}}
       ob = {short_title : "Bar"}
-      FormManager.populateForm ob, el, atts
+      FormManager.populate ob, el, atts
 
     it "should find the DOM element and populuate the form", ->
       expect( $(el).find("#info") ).toHaveValue "Bar"

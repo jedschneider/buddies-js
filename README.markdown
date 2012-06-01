@@ -45,13 +45,13 @@ el = $("#foo") # the html above
 # use the object attribute short_title and put it in the short-title form input
 atts = {short_title : 'short-title'}
 
-FormManager.populateForm ob, el, atts
+FormManager.populate ob, el, atts
 ```
 
 see how easy that was? Now we want to get the data back out of the form, presumably to send back via ajax on submit, or save, ..or something:
 
 ```coffeescript
-$("#foo:input")val("Bar").change()
+$("#foo:input").val("Bar").change()
 # asyncrhonus eventing, but simplifed here as if it were not, see specs for working example
 my_ob = FormManager.extract(el, atts)
 my_ob.short_title #=> "Bar"
