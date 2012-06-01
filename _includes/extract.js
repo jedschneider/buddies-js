@@ -1,0 +1,1 @@
+var new_attributes = FormManager.extract($("#billing"), attributes);
